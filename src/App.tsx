@@ -1,24 +1,40 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useCallback, useMemo, useState } from "react";
+import { Item } from "./components/Item";
 
 function App() {
+  const [items, setItem] = useState<string[]>([]);
+  const [newItem, setNewItem] = useState("");
+  const [wishList, setWishList] = useState<string[]>([])
+
+  function addItemTolist() {
+    // setItem([...items, `Items ${items.length}`]);
+    setItem((items) => [...items, `Item ${items.length}`]);
+  }
+
+  // simulando um tipo de calculo para utilizar o useMemo
+  const countItemsWithOneValue = useMemo(() => { //
+    console.log('teste')
+    return items.filter((item) => item.includes("1")).length;
+  }, [items]); // dependência
+
+  // useCallback function
+  const addItemToWishList = useCallback((item: string) => {
+    setWishList(state => [...state, item])
+  }, [])
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <input
+        type="text"
+        onChange={(e) => setNewItem(e.target.value)}
+        value={newItem}
+      />
+      <button onClick={addItemTolist}> Add Item</button>
+      {items.map((item) => {
+        return <Item key={item} title={item} onAddToWishList={addItemToWishList} />;
+      })}
+
+      <div>Contagem: {countItemsWithOneValue}</div>
     </div>
   );
 }
